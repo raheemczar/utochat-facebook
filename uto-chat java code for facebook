@@ -1,0 +1,44 @@
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+public class AutoChatFacebookPage {
+    private static final String PAGE_ID = "YOUR_PAGE_ID";
+    private static final String ACCESS_TOKEN = "YOUR_ACCESS_TOKEN";
+    public static void main(String[] args) throws IOException {
+        // Create a new scanner
+        Scanner scanner = new Scanner(System.in);
+        // Get the user input
+        System.out.println("Enter the message you want to send: ");
+        String message = scanner.nextLine();
+        // Send the message to the Facebook page
+        sendMessage(PAGE_ID, ACCESS_TOKEN, message);
+        // Close the scanner
+        scanner.close();
+    }
+    private static void sendMessage(String pageId, String accessToken, String message) throws IOException {
+        // Create a new URL
+        URL url = new URL("https://graph.facebook.com/" + pageId + "/messages");
+        // Create a new HTTP connection
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        // Set the request method to POST
+        connection.setRequestMethod("POST");
+        // Set the request headers
+        connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+        connection.setRequestProperty("Content-Type", "application/json");
+        // Write the message to the request body
+        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+        writer.write(message);
+        writer.flush();
+        // Read the response code
+        int responseCode = connection.getResponseCode();
+        // Check the response code
+        if (responseCode == 200) {
+            System.out.println("Message sent successfully!");
+        } else {
+            System.out.println("Error sending message: " + responseCode);
+        }
+    }
+}
